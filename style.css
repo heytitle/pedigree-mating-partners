@@ -1,0 +1,61 @@
+html, body {
+    padding: 10px;
+    font-family: sans-serif;
+}
+
+.clear {
+    clear: both;
+}
+
+.doc-url {
+    width: 60%;
+}
+
+.samples {
+    list-style: none;
+    /* background: red; */
+    padding: 0px;
+    margin: 0px;
+}
+
+.sample {
+    padding: 5px;
+    margin-top: 5px;
+    /* background: yellow; */
+}
+
+.sample .left {
+    font-size: 2em;
+    width: 30%;
+    /* background: blue; */
+    float: left;
+    text-align: right;
+}
+
+.sample .left div {
+    padding-right: 10px;
+}
+
+.sample .right {
+    float: left;
+    width: 70%;
+    /* background: gray; */
+}
+
+.sample .right ul {
+     padding: 0px;
+}
+
+.sample .right li {
+    font-size: 1em;
+    display: inline-block;
+    padding: 5px;
+    margin-left: 5px;
+    border: 1px black solid;
+}
+
+.sample .description {
+     font-size: 15px;
+     font-weight: bold;
+     color: gray;
+}

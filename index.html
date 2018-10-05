@@ -1,0 +1,42 @@
+<!doctype html>
+<html ng-app='pedigreeApp'>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.6.1/papaparse.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.4/angular.min.js"></script>
+        <script src="./lib.js"></script>
+        <link rel="stylesheet" type="text/css" href="./style.css">
+    </head>
+    <body>
+        <div ng-controller="MainController">
+            <b>Google Doc URL</b>
+            <input class="doc-url" type="text" ng-model="url" placeholder="http://...">
+            <button type="button" ng-click="load()">Load!</button>
+            <hr>
+            <ul class="samples">
+                <li class="sample">
+                    <div class="left">
+                        <div class="description">Animal-ID</div>
+                    </div>
+                    <div class="right">
+                        <div class="description">Preferred Mating Partners</div>
+                        
+                    </div>
+                    <div class="clear"></div>
+                </li>
+                <li ng-repeat="sample in samples" class="sample">
+                    <div class="left">
+                        <div>{{sample.id}}</div>
+                    </div>
+                    <div class="right">
+                        <ul>
+                            <li ng-repeat="m in sample.mates" class="mate">
+                                {{m}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="clear"></div>
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>
