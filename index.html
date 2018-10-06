@@ -1,25 +1,29 @@
 <!doctype html>
 <html ng-app='pedigreeApp'>
     <head>
+        <meta charset="UTF-8">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.6.1/papaparse.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.4/angular.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/danialfarid-angular-file-upload/12.2.13/ng-file-upload.min.js"></script>
+        <script src="./variables.js"></script>
         <script src="./lib.js"></script>
         <link rel="stylesheet" type="text/css" href="./style.css">
     </head>
     <body>
         <div ng-controller="MainController">
-            <b>Google Doc URL</b>
-            <input class="doc-url" type="text" ng-model="url" placeholder="http://...">
-            <button type="button" ng-click="load()">Load!</button>
+            <b>Upload a CSV file</b>
+            <button type="file" ngf-select="fileUpload($file, $invalidFiles)"
+                accept="text/csv" ngf-max-height="1000" ngf-max-size="1MB">
+                Select File
+            </button> {{fileName}}
             <hr>
             <ul class="samples">
                 <li class="sample">
                     <div class="left">
-                        <div class="description">Animal-ID</div>
+                        <div class="description">Animal-ID (♂)</div>
                     </div>
                     <div class="right">
-                        <div class="description">Preferred Mating Partners</div>
-                        
+                        <div class="description">Mating Partners (♀) with no common ancestor</div>
                     </div>
                     <div class="clear"></div>
                 </li>

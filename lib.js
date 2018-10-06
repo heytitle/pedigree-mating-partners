@@ -1,49 +1,34 @@
 let tempURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRdNkvws7tYCFX0c3kJ6MY_ZBg8Rkygn5wdUb4GOImAJdk1Bl8msspK04JEVTc1rn70eZZqrs9RPsfz/pub?gid=0&single=true&output=csv';
-angular.module('pedigreeApp', [])
-    .controller('MainController', function($scope, $http) {
-        $scope.url = tempURL;
+let app = angular.module('pedigreeApp', ['ngFileUpload']);
 
-            /*TODO : Mock Data*/
-        // $scope.samples = []
-            // for(let i = 0; i<100; i++){
-            //     $scope.samples.push({
-            //         id: 'ABC-' + i,
-            //         mates: [
-            //             'DDZ',
-            //             'XYZ',
-            //             'Dttu',
-            //             'XY5Z'
-            //         ]
-            //     })
-            // }
-            //
-        $scope.load = () => {
-            $http({
-                method: 'GET',
-                url: $scope.url
-            }).then((response) => {
-                let body = response.data;
-                Papa.parse(body, {
-                    header: true,
-                    complete: (results) => {
-                        console.log(results);
-                        $scope.samples = findMates(results.data);
-                        console.log($scope.samples);
-                    }
-                })
-            }, function errorCallback(response) {
-                alert("ERROR!");
-                console.log(response);
-            });
-        }
+app.controller('MainController', function($scope, $http) {
+    $scope.url = tempURL;
 
-    });
+    $scope.fileUpload = (file, _) => {
+        console.log('File uploaded');
+        console.log(file);
+
+        $scope.fileName = file.name;
+
+        Papa.parse(file, {
+            header: true,
+            complete: (results) => {
+                console.log(results);
+                $scope.samples = findMates(results.data);
+                console.log($scope.samples);
+            }
+        })
+        // console.log('file upload');
+    }
+});
 
 function buildAncestors(sample) {
-    let ancestorKeys = Object.keys(sample).filter( k => k != 'id' && k != 'gender' )
+    let ancestorKeys = Object.keys(sample).filter( k => k != 'ID' && k != 'SEX' )
+    let ancestors = new Set(ancestorKeys.map( k => sample[k] )
+                           .filter( a => a != VARIABLES.na) );
     return {
-        id: sample.id,
-        ancestors: new Set(ancestorKeys.map(k => sample[k]).filter(a => a))
+        id: sample.ID,
+        ancestors: ancestors
     }
 }
 
@@ -52,11 +37,14 @@ function sortSample(a, b){
 }
 
 function findMates(data){
-    let femaleSamples = data.filter( a => a.gender == 'F' )
+    data = data.filter( d => d.ID );
+    console.log(data);
+
+    let femaleSamples = data.filter( a => a.SEX == VARIABLES.female )
         .map(buildAncestors)
         .sort(sortSample);
 
-    let maleSamples = data.filter( a => a.gender == 'M' )
+    let maleSamples = data.filter( a => a.SEX == VARIABLES.male )
         .map(buildAncestors)
         .sort(sortSample);
 
@@ -64,17 +52,17 @@ function findMates(data){
     console.log(femaleSamples);
 
     let samples = [];
-    femaleSamples.forEach( f => {
-        let mates = maleSamples.filter( m => {
-                let a = f.ancestors;
-                let b = m.ancestors;
-                let intersect = new Set([...a].filter(i => b.has(i)));
-                return intersect.size == 0;
-            }).map( m => m.id )
+    maleSamples.forEach( m => {
+        let mates = femaleSamples.filter( f => {
+            let a = m.ancestors;
+            let b = f.ancestors;
+            let intersect = new Set([...a].filter(i => b.has(i)));
+            return intersect.size == 0;
+        }).map( f => f.id )
 
         samples.push({
-            id: f.id,
-            mates: mates
+            id: m.id,
+            mates: mates.slice(0, 10)
         })
     });
 
