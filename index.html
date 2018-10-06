@@ -23,7 +23,9 @@
                         <div class="description">Animal-ID (♂)</div>
                     </div>
                     <div class="right">
-                        <div class="description">Mating Partners (♀) with no common ancestor</div>
+                        <div class="description">Mating Partners (♀) with
+                            <select ng-options="item as item.label for item in comparingLevels" ng-model="comparingLevel" ng-change="process()"></select>
+                            common ancestors.</div>
                     </div>
                     <div class="clear"></div>
                 </li>
@@ -32,9 +34,12 @@
                         <div>{{sample.id}}</div>
                     </div>
                     <div class="right">
+                        <div class="desc">{{sample.mates.length}} Partners</div>
                         <ul>
-                            <li ng-repeat="m in sample.mates" class="mate">
-                                {{m}}
+                            <li ng-repeat="m in sample.mates"
+                                class="mate" title="Common Ancestors: {{m.commonAncestorStr}}"
+                            >
+                                {{m.id}}
                             </li>
                         </ul>
                     </div>

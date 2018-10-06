@@ -3,6 +3,22 @@ let app = angular.module('pedigreeApp', ['ngFileUpload']);
 
 app.controller('MainController', function($scope, $http) {
     $scope.url = tempURL;
+    $scope.comparingLevels = [
+        {
+            label: 'level-1',
+            ancestorKeys: ['C1', 'S1']
+        },
+        {
+            label: 'level-1,2',
+            ancestorKeys: ['C1', 'S1', 'C2', 'S2', 'C3', 'S3']
+        },
+        {
+            label: 'level-1,2,3',
+            ancestorKeys: ['C1', 'S1', 'C2', 'S2', 'C3', 'S3', 'C4', 'S4', 'C5', 'S5', 'C6', 'S6', 'C7', 'S7']
+        }
+    ];
+
+    $scope.comparingLevel = $scope.comparingLevels[0];
 
     $scope.fileUpload = (file, _) => {
         console.log('File uploaded');
@@ -14,55 +30,64 @@ app.controller('MainController', function($scope, $http) {
             header: true,
             complete: (results) => {
                 console.log(results);
-                $scope.samples = findMates(results.data);
-                console.log($scope.samples);
+                $scope.data = results.data;
+
+                $scope.process();
             }
         })
-        // console.log('file upload');
+    }
+
+    $scope.process = () => {
+        console.log('Process');
+        $scope.samples = findMates($scope.data, $scope.comparingLevel);
     }
 });
 
-function buildAncestors(sample) {
-    let ancestorKeys = Object.keys(sample).filter( k => k != 'ID' && k != 'SEX' )
+function buildAncestors(sample, ancestorKeys) {
     let ancestors = new Set(ancestorKeys.map( k => sample[k] )
-                           .filter( a => a != VARIABLES.na) );
-    return {
-        id: sample.ID,
-        ancestors: ancestors
-    }
+                            .filter( a => a != VARIABLES.na && a) );
+                        return {
+                            id: sample.ID,
+                            ancestors: ancestors
+                        }
 }
 
 function sortSample(a, b){
     return a.id.localeCompare(b.id);
 }
 
-function findMates(data){
+function findMates(data, level){
     data = data.filter( d => d.ID );
     console.log(data);
 
     let femaleSamples = data.filter( a => a.SEX == VARIABLES.female )
-        .map(buildAncestors)
+        .map(a => buildAncestors(a, level.ancestorKeys))
         .sort(sortSample);
+    console.log('No. females.' + femaleSamples.length);
+    console.log(femaleSamples)
 
     let maleSamples = data.filter( a => a.SEX == VARIABLES.male )
-        .map(buildAncestors)
+        .map(a => buildAncestors(a, level.ancestorKeys))
         .sort(sortSample);
-
-    console.log('Female Samples');
-    console.log(femaleSamples);
+    console.log('No. males.' + maleSamples.length);
 
     let samples = [];
     maleSamples.forEach( m => {
-        let mates = femaleSamples.filter( f => {
+        let mates = femaleSamples.map(f => {
             let a = m.ancestors;
             let b = f.ancestors;
             let intersect = new Set([...a].filter(i => b.has(i)));
-            return intersect.size == 0;
-        }).map( f => f.id )
+
+            return {
+                id: f.id,
+                commonAncestors: intersect,
+                commonAncestorStr: [...intersect].join(',')
+            }
+        }).filter( f => f.commonAncestors.size > 0 );
 
         samples.push({
             id: m.id,
-            mates: mates.slice(0, 10)
+            mates: mates
         })
     });
 

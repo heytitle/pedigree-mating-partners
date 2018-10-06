@@ -36,6 +36,12 @@ html, body {
     padding-right: 10px;
 }
 
+.sample .right div.desc {
+    margin-top: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
 .sample .right {
     float: left;
     width: 70%;
@@ -52,6 +58,9 @@ html, body {
     padding: 5px;
     margin-left: 5px;
     border: 1px black solid;
+    margin-top: 5px;
+    width: 60px;
+    text-align: center;
 }
 
 .sample .description {
