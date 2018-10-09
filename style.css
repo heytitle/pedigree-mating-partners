@@ -13,7 +13,6 @@ html, body {
 
 .samples {
     list-style: none;
-    /* background: red; */
     padding: 0px;
     margin: 0px;
 }
@@ -21,13 +20,11 @@ html, body {
 .sample {
     padding: 5px;
     margin-top: 5px;
-    /* background: yellow; */
 }
 
 .sample .left {
-    font-size: 1em;
-    width: 30%;
-    /* background: blue; */
+    font-weight: bold;
+    width: 10%;
     float: left;
     text-align: right;
 }
@@ -44,7 +41,7 @@ html, body {
 
 .sample .right {
     float: left;
-    width: 70%;
+    width: 90%;
     /* background: gray; */
 }
 
