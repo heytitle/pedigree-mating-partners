@@ -40,6 +40,7 @@ app.controller('MainController', function($scope, $http) {
     $scope.process = () => {
         console.log('Process');
         $scope.samples = findMates($scope.data, $scope.comparingLevel);
+        $scope.$apply();
     }
 });
 
